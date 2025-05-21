@@ -1,4 +1,4 @@
-build { core init lib/ld app/hello }
+build { core init lib/ld timer app/hello }
 create_boot_directory
 install_config {
  <config>
@@ -9,9 +9,13 @@ install_config {
      <service name="ROM"/>
    </parent-provides>
    <default-route>
-     <any-service> <parent/> </any-service>
+     <any-service> <parent/> <any-child/> </any-service>
    </default-route>
    <default caps="100"/>
+   <start name="timer">
+     <resource name="RAM" quantum="1M"/>
+     <provides> <service name="Timer"/> </provides>
+   </start>
    <start name="hello">
      <resource name="RAM" quantum="10M"/>
    </start>
@@ -19,4 +23,4 @@ install_config {
 }
 build_boot_image [build_artifacts]
 append qemu_args "-nographic -m 64"
-run_genode_until {Hello world.*\n} 10
+run_genode_until forever
